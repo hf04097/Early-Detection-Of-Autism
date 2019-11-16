@@ -1,0 +1,2 @@
+#to store resources. 
+1) https://www.kaggle.com/fabdelja/autism-screening-for-toddlers for dataset
