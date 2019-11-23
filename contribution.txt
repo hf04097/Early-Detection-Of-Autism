@@ -1,5 +1,5 @@
 Contribution
 
-Huda:
+Huda: data-processing, ML technique research
 Hareem:
 Faraz:
