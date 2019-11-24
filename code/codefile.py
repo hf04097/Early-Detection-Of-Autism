@@ -126,7 +126,7 @@ def DTS(data,target,names_of_features):
     # Train model
     dt.fit(data, target)
     dotfile = open("dt.dot", 'w')
-    dot_data = tree.export_graphviz(dt, out_file=dotfile, feature_names = names_of_features,class_names = ['Class/ASD Traits '] )
+    dot_data = tree.export_graphviz(dt, out_file=dotfile, feature_names = names_of_features,class_names = ['Yes',"No"] )
     
     graph = pydotplus.graph_from_dot_data(dot_data)
     Image(graph.create_png())
@@ -157,22 +157,22 @@ DecisonTree = DTS(trainingX,trainingY,feature_names)
 # In[10]:
 
 
-print("Learning model.....")
-model = learn_model(trainingX,trainingY)
-
-
-# In[ ]:
-
-
-print("Classifying test data......")      
-predictedY = classify(model, testX)
-
-
-# In[ ]:
-
-
-print("Evaluating results.....")
-evaluate(testY,predictedY)
+# print("Learning model.....")
+# model = learn_model(trainingX,trainingY)
+#
+#
+# # In[ ]:
+#
+#
+# print("Classifying test data......")
+# predictedY = classify(model, testX)
+#
+#
+# # In[ ]:
+#
+#
+# print("Evaluating results.....")
+# evaluate(testY,predictedY)
 
 
 # In[ ]:
