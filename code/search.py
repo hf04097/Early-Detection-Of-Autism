@@ -33,3 +33,13 @@ class Search:
         overloads the + operator and returns the pairwise sum of respective co-ordinates.
         """
         return Search(self.x + other.x, self.y + other.y)
+
+    def __hash__(self):
+        return hash(str(self))
+
+    def __getAsciiString(self):
+        my_str = 'x = ' + str(self.x) + ' y = ' + str(self.y)
+        return my_str
+
+    def __str__(self):
+        return self.__getAsciiString()
