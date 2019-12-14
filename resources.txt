@@ -1,2 +1,5 @@
 #to store resources. 
 1) https://www.kaggle.com/fabdelja/autism-screening-for-toddlers for dataset
+
+2) prologue queries
+https://stackoverflow.com/questions/29323604/python-program-calling-prolog-and-print-prolog-output

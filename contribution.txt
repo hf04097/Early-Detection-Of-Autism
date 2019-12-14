@@ -1,5 +1,5 @@
 Contribution
 
 Huda: data-processing, ML technique research
-Hareem:
-Faraz:
+Hareem: took processed data, setup a DT, visualization of DT and then extracted rules in text format.
+Faraz: tree pruning and then rules to prologue and then querying through python.

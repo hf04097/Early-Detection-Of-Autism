@@ -1,0 +1,56 @@
+---
+title: "plots"
+author: "Faraz Ahmed Khan"
+date: "11/26/2019"
+output: ''
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+install.packages("beanplot")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+source("http://www.sthda.com/upload/rquery_cormat.r")
+MyData = read.csv(file = "../dataset/Toddler Autism dataset July 2018.csv", header = TRUE, sep= ",")
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+mydata <- MyData[, c(2:11)]
+
+head(mydata)
+col<- colorRampPalette(c("blue", "white", "red"))(20)
+cormat<-rquery.cormat(mydata, type="full", col=col)
+mydata2 = MyData[MyData[, 19] == "Yes", c(2:11)]
+mydata3 = MyData[MyData[, 19] == "No", c(2:11)]
+col<- colorRampPalette(c("blue", "white", "red"))(20)
+cormat<-rquery.cormat(mydata2, type="full", col=col)
+cormat<-rquery.cormat(mydata3, type="full", col=col)
+library(beeswarm)
+```
+```{r}
+hist(MyData[, 12])
+hist(MyData[MyData[, 19] == "Yes", 12])
+hist(MyData[MyData[, 19] == "No", 12])
+```
+```{r}
+library(beanplot)
+beanplot(mydata, bw = 'nrd0')
+beanplot(mydata2, bw = 'nrd0')
+beanplot(mydata3)
+
+
+
+```
+
+

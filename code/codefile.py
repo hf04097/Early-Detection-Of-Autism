@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[54]:
+# In[3]:
 
 
 import pandas as pd
@@ -17,33 +17,36 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import ComplementNB
 from sklearn.naive_bayes import BernoulliNB
-
+from sklearn.tree.export import export_text
+from pyswip imp ort Prolog
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score #calculating accuracy
 
 
-# In[99]:
+# In[21]:
+
 
 
 def preprocess(file,size_of_test):
     # read the csv
-    data = pd.read_table(file, sep=',', index_col=None)
+    data = pd.read_table(file, sep=',', index_col=None
 
 #     print('Shape of DataFrame: {}'.format(data.shape))
     
     
     # drop unwanted columns
-    data = data.drop(['Qchat-10-Score','Ethnicity'], axis=1)
+    data = data.drop(['Qchat-10-Score','Ethnicity', 'Case_No'], axis=1)
 
     # create X and Y datasets for training
     x = data.drop(['Class/ASD Traits '],1)
     y = data['Class/ASD Traits ']
     
-    # convert the data to categorical values
+    # convert the data to categorical values)
     X = pd.get_dummies(x)
     Y = y
     column_names = list(X.columns) 
     
-    X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=size_of_test)
+    X_train, X_test, Y_train, Y_test = model_selection.train_test_split(X, Y, test_size=size_of_test, random_state = 1)
 #     print(X_train.loc[:1])
     print(X_train.shape)
     print(X_test.shape)
@@ -52,7 +55,7 @@ def preprocess(file,size_of_test):
     return X_train, X_test, Y_train, Y_test, column_names
 
 
-# In[95]:
+# In[22]:
 
 
 def learn_model(data,target):
@@ -74,7 +77,7 @@ def learn_model(data,target):
     return gnb_classifier, dtc_classifier, lda_classifier, rfr_classifier,multi_classifier,comp_classifier,bern_classifier
 
 
-# In[7]:
+# In[23]:
 
 
 def classify(classifier, testdata):
@@ -97,7 +100,7 @@ def classify(classifier, testdata):
     return predicted_val_gnB, predicted_val_dtc, predicted_val_lda, predicted_val_rfr
 
 
-# In[8]:
+# In[24]:
 
 
 def evaluate(actual_class, predicted_class):
@@ -117,24 +120,28 @@ def evaluate(actual_class, predicted_class):
     print("The accuracy score of Random Forest Classifier is :",accuracy_rfr)
 
 
-# In[100]:
+# In[25]:
 
 
 def DTS(data,target,names_of_features):
-    dt = DecisionTreeClassifier()
+    dt = DecisionTreeClassifier(max_depth = 5)
 
     # Train model
-    dt.fit(data, target)
-    dotfile = open("dt.dot", 'w')
-    dot_data = tree.export_graphviz(dt, out_file=dotfile, feature_names = names_of_features,class_names = ['Yes',"No"] )
+    d_tree= dt.fit(data, target)
+    dot_data = tree.export_graphviz(dt,feature_names = names_of_features, class_names = ["No", "Yes"])
+    #graph = pydotplus.graph_from_dot_data(dot_data)
+    #Image(graph.create_png())
+    #graph.write_png("dtree.png")
     
-    graph = pydotplus.graph_from_dot_data(dot_data)
-    Image(graph.create_png())
     
-    dotfile.close()
+    #r = export_text(d_tree, feature_names=names_of_features)
+    
+    #f = open("dts_rules.txt", "w")
+    #f.write(r)
+    #f.close()
 
 
-# In[101]:
+# In[26]:
 
 
 print("preprocessing data.....")
@@ -147,34 +154,52 @@ feature_names = data[4]
 print(len(feature_names))
 
 
-# In[102]:
+# In[27]:
 
 
 print("making DTS...")
 DecisonTree = DTS(trainingX,trainingY,feature_names)
 
 
-# In[10]:
+# In[11]:
 
 
-# print("Learning model.....")
-# model = learn_model(trainingX,trainingY)
-#
-#
-# # In[ ]:
-#
-#
-# print("Classifying test data......")
-# predictedY = classify(model, testX)
-#
-#
-# # In[ ]:
-#
-#
-# print("Evaluating results.....")
-# evaluate(testY,predictedY)
+print("Learning model.....")
+model = learn_model(trainingX,trainingY)
 
 
+# In[12]:
+
+
+print("Classifying test data......")      
+predictedY = classify(model, testX)
+
+
+# In[13]:
+
+
+print("Evaluating results.....")
+evaluate(testY,predictedY)
+
+print("Querying")
+prolog = Prolog()
+prolog.consult("prolog_rules.pl")
+
+predicted = []
+for index, data in testX.iterrows():
+    to_query = (data['A1'], data['A2'], data['A3'], data['A4'], data['A5'], data['A6'], data['A7'], data['A8'], data['A9'], data['A10'], data['Age_Mons'])
+    query_str = "autistic(" + (",".join([str(i) for i in to_query])) + ")."
+    print(query_str)
+    if (bool(list((prolog.query(query_str))))):
+        predicted.append("Yes")
+    else:
+        predicted.append("No")
+
+print(accuracy_score(testY, predicted))
+print(confusion_matrix(testY, predicted))
+print(bool(list((prolog.query("autistic(0,0,0,0,0,0,0,0,0,0,0).")))))
+print(bool(list(prolog.query("autistic(0,0,0,1,1,0,0,0,0,0,0)."))))
+print(bool(list(prolog.query("autistic(0,0,0,1,0,0,0,0,0,0,0)."))))
 # In[ ]:
 
 
