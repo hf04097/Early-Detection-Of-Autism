@@ -5,9 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/DAG.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/DAG.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code/codefile.py" beforeDir="false" afterPath="$PROJECT_DIR$/code/codefile.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/contribution.txt" beforeDir="false" afterPath="$PROJECT_DIR$/contribution.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/resources.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/search.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dataset/test.csv" beforeDir="false" afterPath="$PROJECT_DIR$/dataset/test.csv" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,7 +26,7 @@
   <component name="ProjectId" id="1UxKRj6T2HhUGDsNBtauWLhPRCp" />
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/code/codefile.py" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/code/DAG.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
@@ -77,7 +75,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/code/codefile.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/code/DAG.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />

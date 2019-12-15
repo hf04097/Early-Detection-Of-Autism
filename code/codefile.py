@@ -18,7 +18,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.naive_bayes import ComplementNB
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree.export import export_text
-from pyswip imp ort Prolog
+from pyswip import Prolog
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score #calculating accuracy
 
@@ -29,7 +29,7 @@ from sklearn.metrics import accuracy_score #calculating accuracy
 
 def preprocess(file,size_of_test):
     # read the csv
-    data = pd.read_table(file, sep=',', index_col=None
+    data = pd.read_table(file, sep=',', index_col=None)
 
 #     print('Shape of DataFrame: {}'.format(data.shape))
     
@@ -40,7 +40,7 @@ def preprocess(file,size_of_test):
     # create X and Y datasets for training
     x = data.drop(['Class/ASD Traits '],1)
     y = data['Class/ASD Traits ']
-    
+
     # convert the data to categorical values)
     X = pd.get_dummies(x)
     Y = y
