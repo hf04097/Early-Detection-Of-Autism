@@ -11,15 +11,18 @@ from sklearn.metrics import accuracy_score, f1_score
 from pgmpy.inference import VariableElimination
 from multiprocessing import Pool, freeze_support
 from functools import partial
+from pomegranate import *
 
 class DAG:
     def __init__(self, ajd_matrix, name = '../dataset/test.csv'):
         self.matrix = np.matrix.copy(ajd_matrix)
         self.graph = nx.DiGraph(self.matrix)
         self.trained = False
+        self.trained2 = False
         self.model = None
+        self.model2 = None
         self.file_name = name
-    def neighbors(self):
+    def get_neighbors(self):
         rows = self.matrix.shape[0]
         cols = self.matrix.shape[1]
         neighbors = []
@@ -50,17 +53,29 @@ class DAG:
 
     def fit_bayesian(self):
         assert not self.trained
-        print("reading data")
         data, names = read_data(self.file_name, train_flag = True)
         mapping = {i:names[i] for i in range(len(names))}
         nx.relabel_nodes(self.graph, mapping, copy=False)
-        print(self.graph.edges)
-        print("fitting the model")
+        #print(self.graph.edges)
         self.model = BayesianModel(self.graph.edges)
-        print("fitting model on data")
         self.model.fit(data, estimator= BayesianEstimator, prior_type = "K2")
         self.trained = True
 
+    def fit_bayesian2(self):
+        assert not self.trained2
+        data, names = read_data(self.file_name, train_flag=True)
+        if not self.trained and not self.trained2:
+            mapping = {i: names[i] for i in range(len(names))}
+            nx.relabel_nodes(self.graph, mapping, copy=False)
+        list_of_tuples = [[] for i in range(len(self.graph.nodes))]
+        nodes = list(self.graph.nodes)
+        for i in nodes:
+            parents = self.graph.predecessors(i)
+            for j in parents:
+                list_of_tuples[nodes.index(i)].append(nodes.index(j))
+        list_of_tuples = tuple([tuple(i) for i in list_of_tuples])
+        self.model = BayesianNetwork.from_structure(X = data, structure = list_of_tuples, state_names = names)
+        self.trained2 = True
 
     def get_row_prediction(self, row, model, col_names):
         col = col_names
@@ -69,7 +84,7 @@ class DAG:
         to_pred = []
         label = random.random() < 0.5  # including the label with RHS
         if label:
-            to_pred.append('Class/ASD Traits ')
+            to_pred.append('Class/ASD Traits')
             final_predictions_actual.append(row[1].values[-1])
         variables_to_hide = int(round(np.random.normal(2), 0))
         for i in range(variables_to_hide):
@@ -90,13 +105,35 @@ class DAG:
     def get_error(self, data):
         model_inference = VariableElimination(self.model)
         cols = list(data.columns)
-        print("covering rows to list")
         rows = list(data.iterrows())
-        print("done")
         with Pool() as pool:
             results = pool.map(partial(self.get_row_prediction, model = model_inference, col_names = cols), rows, chunksize= len(rows))
-        print("got results", results)
-        print(np.nanmean(results))
+        return (np.nanmean(results))
+
+    def get_error2(self, data):
+        global COL_NAMES
+        final_predictions_actual = []
+        final_predictions_model = []
+        for row in data.iterrows():
+            to_pred = []
+            label = random.random() < 0.5  # including the label with RHS
+            if label:
+                to_pred.append(len(COL_NAMES) - 1)
+                final_predictions_actual.append(row[1].values[-1])
+            variables_to_hide = int(round(np.random.normal(2), 0))
+            for i in range(variables_to_hide):
+                column = random.randint(0, len(COL_NAMES) - 2)
+                to_pred.append(column)
+                final_predictions_actual.append(row[1].values[column])
+            if to_pred:
+                for i in to_pred:
+                    row[1].values[i] = None
+                prediction = self.model.predict([row[1].values], n_jobs = -1)
+                #print(prediction, to_pred)
+                for i in to_pred:
+                    #print(i)
+                    final_predictions_model.append(prediction[0][i])
+        return (accuracy_score(final_predictions_actual, final_predictions_model))
 
         """
         col = list(data.columns)
@@ -123,15 +160,29 @@ class DAG:
         print(f1_score(final_predictions_actual, final_predications_model))
         """
 
+    def test_MSE(self):
+        if not self.trained2:
+            self.fit_bayesian2()
+        data, _ = read_data(self.file_name, test_flag= True)
+        #print(data.shape)
+        #return K2Score(data).score(self.model)
+        return  self.get_error2(data)
+
     def score(self):
         if not self.trained:
-            print("model not training, going to training")
             self.fit_bayesian()
-            print("training the model")
         data, _ = read_data(self.file_name, verification_flag = True)
-        print(data.shape)
-        print("now computing score")
-        self.get_error(data)
+        #print(data.shape)
+        return K2Score(data).score(self.model)
+        #return  self.get_error(data)
+        #return K2Score(data).score(self.model)
+
+    def score2(self):
+        if not self.trained2:
+            self.fit_bayesian2()
+        data, _ = read_data(self.file_name, verification_flag = True)
+        #print(data.shape)
+        self.get_error2(data)
         #return K2Score(data).score(self.model)
 
     def __hash__(self):
@@ -174,14 +225,14 @@ if __name__ == '__main__':
         matrix[i, cols - 1] = 1
 
     test = DAG(matrix, name = '../dataset/Toddler Autism dataset July 2018.csv')
-    print(test.matrix)
+    #print(test.matrix)
     #print(test.score())
     visited = set()
     visited.add(test)
-    for i in test.neighbors():
+    for i in test.get_neighbors():
         if i not in visited:
             print(i.matrix)
-            print(i.score())
+            print(i.score2())
         else:
             print("already visited")
 

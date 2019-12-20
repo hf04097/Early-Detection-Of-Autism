@@ -4,11 +4,11 @@ class Search:
         :param x: starting x co-ordinate
         :param y: starting y co-ordinate
         """
-        self.x = x
-        self.y = y
-        self.func = lambda x, y: x**2 + y**2
+        self.x = round(x,2)
+        self.y = round(y,2)
+        self.func = lambda x, y: (x**2) + (y**2)
 
-    def get_neighbors(self, step = 1):
+    def get_neighbors(self, step = 0.1):
         """
         :param step: step size to take
         :return: a list of neighbors who are also of type Search
